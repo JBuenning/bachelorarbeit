@@ -12,7 +12,7 @@ def compare_cf(var_name, dir='.', ax=plt, exclude=[], exchange_names={'kOmega':r
                                                                 'kEpsilon':r'$k-\epsilon$',
                                                                 'kOmegaSST':r'$k-\omega SST$'}):
 
-    dirs = [file_ for file_ in os.listdir(dir) if os.path.isdir(file_)]
+    dirs = [file_ for file_ in os.listdir(dir) if os.path.isdir(os.path.join(dir, file_))]
 
     if var_name:
         dirs.sort(key=lambda f: float(re.findall(r"[-+]?\d*\.\d+|\d+", f)[-1]))
@@ -32,7 +32,7 @@ def compare_cf(var_name, dir='.', ax=plt, exclude=[], exchange_names={'kOmega':r
         if file_ in exclude or var in exclude:
             continue
 
-        Rex, cf = get_cf(file_)
+        Rex, cf = get_cf(os.path.join(dir, file_))
 
         if var_name:
             ax.scatter(Rex, cf, label=f'{var_name} {var}')
@@ -69,7 +69,7 @@ def compare_cw_over_Rex(var_name, dir='.', ax=plt, exclude=[], exchange_names={'
                                                                 'kEpsilon':r'$k-\epsilon$',
                                                                 'kOmegaSST':r'$k-\omega SST$'}):
 
-    dirs = [file_ for file_ in os.listdir(dir) if os.path.isdir(file_)]
+    dirs = [file_ for file_ in os.listdir(dir) if os.path.isdir(os.path.join(dir, file_))]
 
     if var_name:
         dirs.sort(key=lambda f: float(re.findall(r"[-+]?\d*\.\d+|\d+", f)[-1]))
@@ -89,7 +89,7 @@ def compare_cw_over_Rex(var_name, dir='.', ax=plt, exclude=[], exchange_names={'
         if file_ in exclude or var in exclude:
             continue
 
-        Rex_plate, cf_plate = get_cf(file_)
+        Rex_plate, cf_plate = get_cf(os.path.join(dir, file_))
         Rex = np.sort(np.concatenate((np.geomspace(5e5, 1e9, 1000),
                 np.linspace(5e5, 1e9, 1000))))
 
@@ -124,7 +124,7 @@ def compare_cw(var_name, dir='.', interval_pct=False, interval_index=-1, analyti
     cws = []
     #cws_ich = []
 
-    dirs = [file_ for file_ in os.listdir(dir) if os.path.isdir(file_)]
+    dirs = [file_ for file_ in os.listdir(dir) if os.path.isdir(os.path.join(dir, file_))]
     if var_name:
         dirs.sort(key=lambda f: float(re.findall(r"[-+]?\d*\.\d+|\d+", f)[-1]))
     else:
@@ -141,7 +141,7 @@ def compare_cw(var_name, dir='.', interval_pct=False, interval_index=-1, analyti
             else:
                 var = file_
 
-        cw = get_cw(file_)
+        cw = get_cw(os.path.join(dir, file_))
         vars_.append(var)
         cws.append(cw)
 
