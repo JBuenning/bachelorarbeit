@@ -39,11 +39,12 @@ def compare_cf(var_name, dir='.', ax=plt, exclude=[], exchange_names={'kOmega':r
         else:
             ax.scatter(Rex, cf, label=f'{var}')
 
-    ##################
-    #weitere Kurven
+
+def compare_cf_analytical(Rex=np.sort(np.concatenate((np.geomspace(1e5, 1e9, 1000),
+            np.linspace(1e5, 1e9, 1000)))), ax=plt):
     #fuer log und lineare Verteilung
-    Rex = np.sort(np.concatenate((np.geomspace(1e5, 1e9, 1000),
-                np.linspace(1e5, 1e9, 1000))))
+    # Rex = np.sort(np.concatenate((np.geomspace(1e5, 1e9, 1000),
+    #             np.linspace(1e5, 1e9, 1000))))
 
     # cf = list(map(cf_unbekannt, Rex))
     # ax.plot(Rex, cf, color='black', label=r'$c_f = 2(\frac{\kappa}{\ln Re} \mathrm{G}(\Lambda; D))^2$')
@@ -61,8 +62,6 @@ def compare_cf(var_name, dir='.', ax=plt, exclude=[], exchange_names={'kOmega':r
     Rex, cf = cf_experiment()
     ax.scatter(Rex, cf, label='Experimentell nach Osterlund',
                 marker='x', color='black', s=60)
-    ax.xlabel('$Re_x$')
-    ax.ylabel('$c_f$')
 
 
 def compare_cw_over_Rex(var_name, dir='.', ax=plt, exclude=[], exchange_names={'kOmega':r'$k-\omega$',
@@ -100,6 +99,9 @@ def compare_cw_over_Rex(var_name, dir='.', ax=plt, exclude=[], exchange_names={'
         else:
             ax.scatter(Rex, cw, label=f'{var}')
 
+def compare_cw_over_Rex_analytical(Rex=np.sort(np.concatenate((np.geomspace(5e5, 1e9, 1000),
+                np.linspace(5e5, 1e9, 1000)))), ax=plt):
+
     cw = [cw_from_cf(cf_one_seventh, Rex[0], Rex_) for Rex_ in Rex]
     ax.plot(Rex, cw, label='1/7th law')
     cw = [cw_from_cf(cf_white, Rex[0], Rex_) for Rex_ in Rex]
@@ -111,10 +113,6 @@ def compare_cw_over_Rex(var_name, dir='.', ax=plt, exclude=[], exchange_names={'
     # cw = [cw_from_cf(cf_blasius_laminar, Rex[0], Rex_) for Rex_ in Rex]
     # ax.plot(Rex, cw, label='Blasius (laminar)')
 
-
-    plt.xlabel('$Re_x$')
-    plt.ylabel(r'$c_{W \nu}$')
-    # plt.show()
 
 def compare_cw(var_name, dir='.', interval_pct=False, interval_index=-1, analytic=False, exchange_names={'kOmega':r'$k-\omega$',
                                                                                                         'kEpsilon':r'$k-\epsilon$',
