@@ -93,4 +93,5 @@ def cw_from_cf(cf_func, Rex1, Rex2):
 
 if __name__ == '__main__':
 
-    print(dy_unbekannt(1e7, 100)/dy_unbekannt(5e9, 200))
+    #print(0.5*dy_unbekannt(1e9, 40)*1e9*(0.5 * cf_unbekannt(1e7))**0.5)
+    print(dy_unbekannt(1e7,40.)/dy_unbekannt(5e8,40.))

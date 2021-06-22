@@ -23,33 +23,32 @@ def get_latest_time(case_dir='.'):
     latest_time = times_str[np.argmax(times_float)]
     return latest_time
 
-def get_real_wss(case_dir='.', patch='platte'):
+
+def get_real_wss(case_dir='.', patch='Tragfluegel'):
     last_timestep = get_latest_time(case_dir)
     wss_parser = Parser(os.path.join(case_dir, last_timestep, 'wallShearStress'))
     wss = np.array(wss_parser['boundaryField'][patch]['value'].val)
     wss_x = wss[:,0]
 
     try:
-        x = np.loadtxt(os.path.join(case_dir, f'{patch}_x_coordinates.csv'))
+        x, y, z = np.loadtxt(os.path.join(case_dir, f'{patch}_coordinates.csv'))
+
     except OSError:
         x, y, z = readmesh(case_dir, boundary=patch)
-        np.savetxt(os.path.join(case_dir, f'{patch}_x_coordinates.csv'), x)
+        np.savetxt(os.path.join(case_dir, f'{patch}_coordinates.csv'), [x,y,z])
+
+    mask = y > 0
+    x = x[mask]
+    y = y[mask]
+    z = z[mask]
+    wss_x = wss_x[mask]
 
     return x, wss_x
 
 
-def get_sampled_wss(case_dir='.'):
-    last_timestep = get_latest_time(case_dir)
-    df = pd.read_csv(os.path.join(case_dir, 'postProcessing/wallShearStressGraph', last_timestep, 'l1_wallShearStress.csv'))
-    x = df['x'].values
-
-    return x, df['wallShearStress_0'].values #only x coordinate
-
-
-def get_cf(case_dir='.', Re=1e10, l=1.0, return_x=False):
+def get_cf(case_dir='.', Re=1e7, l=1.0, return_x=False):
 
     x, tauw = get_real_wss(case_dir)
-    #x, tauw = get_sampled_wss(case_dir)
     cf = tauw * -2.0
 
     Rex = x * Re / l
@@ -59,18 +58,18 @@ def get_cf(case_dir='.', Re=1e10, l=1.0, return_x=False):
     else:
         return Rex, cf
 
-def get_cw_between_Rex(Rex, cf, Rex1, Rex2):
+# def get_cw_between_Rex(Rex, cf, Rex1, Rex2):
 
-    index1 = np.argmin(np.abs(Rex-Rex1))
-    index2 = np.argmin(np.abs(Rex-Rex2))
+#     index1 = np.argmin(np.abs(Rex-Rex1))
+#     index2 = np.argmin(np.abs(Rex-Rex2))
 
-    Rex = Rex[index1:index2+1]
-    Rex[0] = Rex1
-    Rex[-1] = Rex2
-    cf = cf[index1:index2+1]
+#     Rex = Rex[index1:index2+1]
+#     Rex[0] = Rex1
+#     Rex[-1] = Rex2
+#     cf = cf[index1:index2+1]
 
-    cw = np.trapz(cf, Rex)/(Rex2-Rex1)
-    return cw
+#     cw = np.trapz(cf, Rex)/(Rex2-Rex1)
+#     return cw
 
 def get_cw(case_dir):
 
